@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParamStatDto implements Validator {
+public class ParamStatDto {
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime start;
@@ -23,18 +21,4 @@ public class ParamStatDto implements Validator {
     private LocalDateTime end;
     private List<String> uris;
     private Boolean unique = false;
-
-
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return ParamStatDto.class.isAssignableFrom(clazz);
-    }
-
-    @Override
-    public void validate(Object target, Errors errors) {
-        ParamStatDto dto = (ParamStatDto) target;
-        if (!dto.getEnd().isAfter(dto.getStart())) {
-            errors.rejectValue("end", "date.range.invalid");
-        }
-    }
 }

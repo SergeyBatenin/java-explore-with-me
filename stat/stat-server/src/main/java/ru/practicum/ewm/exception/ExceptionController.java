@@ -13,6 +13,14 @@ import java.nio.charset.StandardCharsets;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionController extends RuntimeException {
+    @ExceptionHandler(DateValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage dateValidateHandle(DateValidationException exception) {
+        log.error("ERROR", exception);
+        final ByteArrayOutputStream out = getOutputStream(exception);
+        return new ErrorMessage(exception.getMessage(), out.toString(StandardCharsets.UTF_8));
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage handle(Exception exception) {
