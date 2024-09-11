@@ -3,6 +3,7 @@ package ru.practicum.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,6 +16,36 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionController {
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
+        log.error("ERROR", exception);
+        final ByteArrayOutputStream out = getOutputStream(exception);
+
+        return ApiError.builder()
+                .status("BAD_REQUEST")
+                .reason("Incorrectly made request.")
+                .message(exception.getMessage())
+                .timestamp(LocalDateTime.now())
+                .stacktrace(out.toString(StandardCharsets.UTF_8))
+                .build();
+    }
+
+    @ExceptionHandler(DataNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleNotFound(DataNotFoundException exception) {
+        log.error("ERROR", exception);
+        final ByteArrayOutputStream out = getOutputStream(exception);
+
+        return ApiError.builder()
+                .status("NOT_FOUND")
+                .reason("The required object was not found.")
+                .message(exception.getMessage())
+                .timestamp(LocalDateTime.now())
+                .stacktrace(out.toString(StandardCharsets.UTF_8))
+                .build();
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConstraintViolation(DataIntegrityViolationException exception) {
