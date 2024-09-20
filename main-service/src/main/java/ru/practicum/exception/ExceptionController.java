@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,15 +17,31 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionController {
-    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, MissingServletRequestParameterException.class,
+            DateTimeException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
+    public ApiError handleMethodArgumentNotValid(Exception exception) {
         log.error("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
 
         return ApiError.builder()
                 .status("BAD_REQUEST")
                 .reason("Incorrectly made request.")
+                .message(exception.getMessage())
+                .timestamp(LocalDateTime.now())
+                .stacktrace(out.toString(StandardCharsets.UTF_8))
+                .build();
+    }
+
+    @ExceptionHandler(NotAvailableException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleNotAvailable(NotAvailableException exception) {
+        log.error("ERROR", exception);
+        final ByteArrayOutputStream out = getOutputStream(exception);
+
+        return ApiError.builder()
+                .status("FORBIDDEN")
+                .reason("The required object was not found.")
                 .message(exception.getMessage())
                 .timestamp(LocalDateTime.now())
                 .stacktrace(out.toString(StandardCharsets.UTF_8))
@@ -46,9 +63,10 @@ public class ExceptionController {
                 .build();
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler({DataIntegrityViolationException.class, IllegalStateException.class, RequestLimitException.class,
+            EventAvailableException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleConstraintViolation(DataIntegrityViolationException exception) {
+    public ApiError handleConstraintViolation(RuntimeException exception) {
         log.error("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
 
