@@ -10,6 +10,7 @@ import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface EventMapper {
@@ -27,6 +28,8 @@ public interface EventMapper {
     @Mapping(target = "confirmedRequests", source = "confirmedRequests")
     @Mapping(target = "views", source = "views")
     EventShortDto toShortDto(Event event, long confirmedRequests, long views);
+
+    List<EventShortDto> toShortDto(Iterable<Event> events);
 
     default LocalDateTime getCurrentTime() {
         return LocalDateTime.now();
