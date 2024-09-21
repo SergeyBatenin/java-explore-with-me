@@ -2,6 +2,7 @@ package ru.practicum.ewm.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,9 +14,9 @@ import java.nio.charset.StandardCharsets;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionController extends RuntimeException {
-    @ExceptionHandler(DateValidationException.class)
+    @ExceptionHandler({DateValidationException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorMessage dateValidateHandle(DateValidationException exception) {
+    public ErrorMessage dateValidateHandle(Exception exception) {
         log.error("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
         return new ErrorMessage(exception.getMessage(), out.toString(StandardCharsets.UTF_8));

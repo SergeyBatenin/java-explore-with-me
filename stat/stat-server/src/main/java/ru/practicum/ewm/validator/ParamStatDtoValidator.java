@@ -15,7 +15,7 @@ public class ParamStatDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         ParamStatDto dto = (ParamStatDto) target;
-        if (!dto.getEnd().isAfter(dto.getStart())) {
+        if (dto.getStart().isAfter(dto.getEnd())) {
             errors.rejectValue("end", "date.range.invalid");
         }
     }

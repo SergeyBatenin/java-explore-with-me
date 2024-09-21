@@ -473,7 +473,7 @@ public class EventServiceImpl implements EventService {
         long countConfirmedRequests = requestRepository.countConfirmedRequestsByEventId(eventId);
         List<String> uris = new ArrayList<>();
         uris.add(request.getRequestURI());
-        ParamStatDto paramStatDto = new ParamStatDto(event.getPublishedOn(), LocalDateTime.now(), uris, true);
+        ParamStatDto paramStatDto = new ParamStatDto(event.getCreatedOn(), LocalDateTime.now(), uris, true);
         List<StatInfoDto> stats = statClient.getStats(paramStatDto);
 
         EventFullDto fullDto = eventMapper.toFullDto(
@@ -490,7 +490,7 @@ public class EventServiceImpl implements EventService {
         String ip = xForwardedForHeader == null ? request.getRemoteAddr() : xForwardedForHeader.split(",")[0];
         ParamHitDto paramHitDto = new ParamHitDto("ewm-main-service", request.getRequestURI(), ip, LocalDateTime.now());
 
-        statClient.save(paramHitDto).subscribe();
+        statClient.save(paramHitDto);
     }
     //endregion PublicApi
 }

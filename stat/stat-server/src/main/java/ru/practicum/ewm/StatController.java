@@ -48,12 +48,12 @@ public class StatController {
         ParamStatDto paramStatDto = new ParamStatDto(start, end, uris, unique);
         Errors errors = new BeanPropertyBindingResult(paramStatDto, "paramStatDto");
         paramStatDtoValidator.validate(paramStatDto, errors);
+        log.info("GET /stats request: {}", paramStatDto);
 
         if (errors.hasErrors()) {
             throw new DateValidationException("Время начала периода не может быть позже даты окончания периода");
         }
 
-        log.info("GEt /stats request: {}", paramStatDto);
 
         List<StatInfoDto> statDtos;
         if (paramStatDto.getUris() == null) {

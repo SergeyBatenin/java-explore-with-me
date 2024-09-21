@@ -1,5 +1,6 @@
 package ru.practicum.ewm.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -26,5 +27,6 @@ public class ParamHitDto {
             message = "Некорректный формат IP-адреса")
     private String ip;
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }
