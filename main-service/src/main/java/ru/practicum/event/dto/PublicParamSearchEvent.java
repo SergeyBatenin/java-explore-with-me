@@ -16,7 +16,7 @@ import java.util.List;
 @ToString
 public class PublicParamSearchEvent {
     private String text;
-    List<Long> categories;
+    private List<Long> categories;
     private Boolean paid;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeStart;

@@ -1,6 +1,7 @@
 package ru.practicum.compilation.controller;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -24,8 +25,8 @@ public class PublicCompilationController {
 
     @GetMapping
     public List<CompilationDto> getAll(@RequestParam(required = false) Boolean pinned,
-                                       @RequestParam(defaultValue = "0") int from,
-                                       @RequestParam(defaultValue = "10") int size) {
+                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                       @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET ALL /compilations request: pinned={}", pinned);
         List<CompilationDto> compilations = compilationService.getAll(pinned, from, size);
         log.info("GET ALL /compilations response: {} elements ", compilations.size());

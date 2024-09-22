@@ -1,6 +1,8 @@
 package ru.practicum.event.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,8 +40,8 @@ public class AdminEventController {
                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                      @RequestParam(required = false)
                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                     @RequestParam(defaultValue = "0") int from,
-                                     @RequestParam(defaultValue = "10") int size) {
+                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                     @RequestParam(defaultValue = "10") @Positive int size) {
         if (rangeStart != null && rangeEnd != null && rangeEnd.isBefore(rangeStart)) {
             throw new DateTimeException("Дата начала периода поиска не может быть позже даты окончания периода.");
         }
@@ -59,7 +61,7 @@ public class AdminEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateByAdmin(@PathVariable long eventId,
+    public EventFullDto updateByAdmin(@PathVariable @Positive long eventId,
                                       @RequestBody @Valid UpdateEventAdminRequest updateRequest) {
         log.info("ADMIN PATCH BY ID /admin/events/{} request: {}", eventId, updateRequest);
         EventFullDto event = eventService.updateByAdmin(eventId, updateRequest);

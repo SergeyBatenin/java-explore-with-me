@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.category.model.Category;
+import ru.practicum.event.dto.LocationDto;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
@@ -55,7 +56,7 @@ public class Event {
             @AttributeOverride(name = "lat", column = @Column(name = "latitude")),
             @AttributeOverride(name = "lon", column = @Column(name = "longitude"))
     })
-    private Location location;
+    private LocationDto location;
     @Column(name = "paid")
     private boolean paid;
     @Column(name = "participant_limit")

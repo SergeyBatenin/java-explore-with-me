@@ -1,5 +1,6 @@
 package ru.practicum.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,10 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ExceptionController {
     @ExceptionHandler({MethodArgumentNotValidException.class, MissingServletRequestParameterException.class,
-            DateTimeException.class})
+            DateTimeException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMethodArgumentNotValid(Exception exception) {
-        log.error("ERROR", exception);
+        log.warn("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
 
         return ApiError.builder()

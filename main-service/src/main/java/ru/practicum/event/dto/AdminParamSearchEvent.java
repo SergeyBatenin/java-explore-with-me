@@ -1,5 +1,6 @@
 package ru.practicum.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +15,13 @@ import java.util.List;
 @Builder
 @ToString
 public class AdminParamSearchEvent {
-    List<Long> users;
-    List<Long> categories;
-    List<State> states;
-    LocalDateTime rangeStart;
-    LocalDateTime rangeEnd;
-    int from;
-    int size;
+    private List<Long> users;
+    private List<Long> categories;
+    private List<State> states;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime rangeStart;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime rangeEnd;
+    private int from;
+    private int size;
 }

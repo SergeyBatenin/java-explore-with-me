@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.event.model.Location;
 import ru.practicum.event.model.UserStateAction;
 import ru.practicum.event.validation.UpdateEventDateValidation;
 
@@ -28,7 +27,7 @@ public class UpdateEventUserRequest {
     @UpdateEventDateValidation
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-    private Location location;
+    private LocationDto location;
     private Boolean paid;
     @PositiveOrZero(message = "Некорректное количество участников события")
     private Integer participantLimit;

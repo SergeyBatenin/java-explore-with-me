@@ -1,9 +1,12 @@
 package ru.practicum.event.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class PublicEventController {
     private final EventService eventService;
 
@@ -36,8 +40,8 @@ public class PublicEventController {
                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                              @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                              @RequestParam(required = false) Sort sort,
-                                             @RequestParam(defaultValue = "0") int from,
-                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                             @RequestParam(defaultValue = "10") @Positive int size,
                                              HttpServletRequest request) {
         if (rangeStart != null && rangeEnd != null && rangeEnd.isBefore(rangeStart)) {
             throw new DateTimeException("Дата начала периода поиска не может быть позже даты окончания периода.");
@@ -60,7 +64,7 @@ public class PublicEventController {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto showById(@PathVariable long eventId, HttpServletRequest request) {
+    public EventFullDto showById(@PathVariable @Positive long eventId, HttpServletRequest request) {
         log.info("GET BY ID /events/{} request", eventId);
         EventFullDto event = eventService.showById(eventId, request);
         log.info("GET BY ID/events/{} response: {}", eventId, event);

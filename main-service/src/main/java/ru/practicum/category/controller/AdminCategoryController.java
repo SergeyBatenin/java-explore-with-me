@@ -1,6 +1,7 @@
 package ru.practicum.category.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class AdminCategoryController {
     }
 
     @PatchMapping("/{catId}")
-    public CategoryDto update(@Valid @RequestBody CategoryDto categoryDto, @PathVariable long catId) {
+    public CategoryDto update(@Valid @RequestBody CategoryDto categoryDto, @PathVariable @Positive long catId) {
         log.info("PATCH /admin/categories/{} request: {}", catId, categoryDto);
         CategoryDto updatedCategory = categoryService.update(catId, categoryDto);
         log.info("PATCH /admin/categories/{} response: {}", catId, updatedCategory);
@@ -44,7 +45,7 @@ public class AdminCategoryController {
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long catId) {
+    public void delete(@PathVariable @Positive long catId) {
         log.info("DELETE /admin/categories/{} request", catId);
         categoryService.delete(catId);
         log.info("DELETE /admin/categories/{} response: success", catId);

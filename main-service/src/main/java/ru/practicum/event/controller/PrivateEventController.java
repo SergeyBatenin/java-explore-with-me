@@ -1,6 +1,8 @@
 package ru.practicum.event.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,7 @@ public class PrivateEventController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto create(@Valid @RequestBody NewEventDto eventDto,
-                               @PathVariable long userId) {
+                               @PathVariable @Positive long userId) {
         log.info("POST /users/{}/events request: {}", userId, eventDto);
         EventFullDto eventFullDto = eventService.create(userId, eventDto);
         log.info("POST /users/{}/events response: {}", userId, eventFullDto);
@@ -44,9 +46,9 @@ public class PrivateEventController {
     }
 
     @GetMapping
-    public List<EventShortDto> getAll(@PathVariable long userId,
-                                      @RequestParam(defaultValue = "0") int from,
-                                      @RequestParam(defaultValue = "10") int size) {
+    public List<EventShortDto> getAll(@PathVariable @Positive long userId,
+                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                      @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET ALL /users/{}/events request: from={}, size={}", userId, from, size);
         List<EventShortDto> events = eventService.getAll(userId, from, size);
         log.info("GET ALL /users/{}/events response: {}", userId, events.size());
@@ -54,7 +56,7 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto getById(@PathVariable long userId, @PathVariable long eventId) {
+    public EventFullDto getById(@PathVariable @Positive long userId, @PathVariable @Positive long eventId) {
         log.info("GET BY ID /users/{}/events/{} request", userId, eventId);
         EventFullDto event = eventService.getById(userId, eventId);
         log.info("GET BY ID /users/{}/events/{} response: {}", userId, eventId, event);
@@ -62,8 +64,8 @@ public class PrivateEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateByCreator(@PathVariable long userId,
-                                        @PathVariable long eventId,
+    public EventFullDto updateByCreator(@PathVariable @Positive long userId,
+                                        @PathVariable @Positive long eventId,
                                         @RequestBody @Valid UpdateEventUserRequest updateRequest) {
         log.info("USER PATCH BY ID /users/{}/events/{} request", userId, eventId);
         EventFullDto event = eventService.updateByCreator(userId, eventId, updateRequest);
@@ -72,7 +74,8 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{eventId}/requests")
-    public List<ParticipationRequestDto> getRequestsToCreator(@PathVariable long userId, @PathVariable long eventId) {
+    public List<ParticipationRequestDto> getRequestsToCreator(@PathVariable @Positive long userId,
+                                                              @PathVariable @Positive long eventId) {
         log.info("GET REQUESTS TO CREATOR /users/{}/events/{}/requests request", userId, eventId);
         List<ParticipationRequestDto> requests = eventService.getRequests(userId, eventId);
         log.info("GET REQUESTS TO CREATOR /users/{}/events/{}/requests response: {}", userId, eventId, requests.size());
@@ -80,8 +83,8 @@ public class PrivateEventController {
     }
 
     @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResult replyToParticipationRequests(@PathVariable long userId,
-                                                                       @PathVariable long eventId,
+    public EventRequestStatusUpdateResult replyToParticipationRequests(@PathVariable @Positive long userId,
+                                                                       @PathVariable @Positive long eventId,
                                                                        @RequestBody @Valid EventRequestStatusUpdateRequest updateRequest) {
         log.info("PATCH REPLY TO REQUESTS /users/{}/events/{}/requests request: {}", userId, eventId, updateRequest);
         EventRequestStatusUpdateResult result = eventService.replyToRequests(userId, eventId, updateRequest);

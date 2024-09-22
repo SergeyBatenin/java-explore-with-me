@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.practicum.event.model.AdminStateAction;
-import ru.practicum.event.model.Location;
 import ru.practicum.event.validation.UpdateEventDateValidation;
 
 import java.time.LocalDateTime;
@@ -30,7 +29,7 @@ public class UpdateEventAdminRequest {
     @UpdateEventDateValidation
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-    private Location location;
+    private LocationDto location;
     private Boolean paid;
     @PositiveOrZero(message = "Некорректное количество участников события")
     private Integer participantLimit;

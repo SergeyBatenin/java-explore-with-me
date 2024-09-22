@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.event.model.Location;
 import ru.practicum.event.validation.EventDateValidation;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,7 @@ public class NewEventDto {
     private LocalDateTime eventDate;
     @NotNull
     @Valid
-    private Location location;
+    private LocationDto location;
     private boolean paid = false;
     @PositiveOrZero
     private int participantLimit = 0;

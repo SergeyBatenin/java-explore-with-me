@@ -17,7 +17,7 @@ public class ExceptionController extends RuntimeException {
     @ExceptionHandler({DateValidationException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage dateValidateHandle(Exception exception) {
-        log.error("ERROR", exception);
+        log.warn("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
         return new ErrorMessage(exception.getMessage(), out.toString(StandardCharsets.UTF_8));
     }

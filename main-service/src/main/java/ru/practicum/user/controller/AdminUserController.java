@@ -1,6 +1,8 @@
 package ru.practicum.user.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,8 +41,8 @@ public class AdminUserController {
 
     @GetMapping
     public List<UserDto> getByIds(@RequestParam(required = false) List<Long> ids,
-                                  @RequestParam(defaultValue = "0") int from,
-                                  @RequestParam(defaultValue = "10") int size) {
+                                  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                  @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET /admin/users request: ids={}, from={}, size={}", ids, from, size);
         List<UserDto> users = userService.getByIds(ids, from, size);
         log.info("GET /admin/users response: {} users", users.size());
@@ -49,7 +51,7 @@ public class AdminUserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long userId) {
+    public void delete(@PathVariable @Positive long userId) {
         log.info("DELETE /admin/users/{} request", userId);
         userService.delete(userId);
         log.info("DELETE /admin/users/{} response: success", userId);
