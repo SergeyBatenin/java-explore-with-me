@@ -5,15 +5,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.mapper.UserMapper;
 import ru.practicum.user.model.User;
+import ru.practicum.user.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<UserDto> getByIds(List<Long> userIds, int from, int size) {
+    public List<UserDto> getByIds(Set<Long> userIds, int from, int size) {
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
 
         List<User> users;

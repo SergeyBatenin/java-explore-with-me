@@ -21,6 +21,7 @@ import ru.practicum.exception.DateTimeException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/events")
@@ -32,7 +33,7 @@ public class PublicEventController {
 
     @GetMapping
     public List<EventShortDto> showAllEvents(@RequestParam(required = false) String text,
-                                             @RequestParam(required = false) List<Long> categories,
+                                             @RequestParam(required = false) Set<Long> categories,
                                              @RequestParam(required = false) Boolean paid,
                                              @RequestParam(required = false)
                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,

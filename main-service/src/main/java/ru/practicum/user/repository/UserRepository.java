@@ -6,8 +6,9 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.user.model.User;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    List<User> findAllByIdIn(List<Long> ids, Pageable page);
+    List<User> findAllByIdIn(Set<Long> ids, Pageable page);
 }

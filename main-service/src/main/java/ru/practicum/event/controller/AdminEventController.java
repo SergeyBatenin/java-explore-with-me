@@ -23,6 +23,7 @@ import ru.practicum.exception.DateTimeException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/events")
@@ -33,9 +34,9 @@ public class AdminEventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventFullDto> getAll(@RequestParam(required = false) List<Long> users,
-                                     @RequestParam(required = false) List<Long> categories,
-                                     @RequestParam(required = false) List<State> states,
+    public List<EventFullDto> getAll(@RequestParam(required = false) Set<Long> users,
+                                     @RequestParam(required = false) Set<Long> categories,
+                                     @RequestParam(required = false) Set<State> states,
                                      @RequestParam(required = false)
                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                      @RequestParam(required = false)

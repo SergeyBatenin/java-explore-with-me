@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.practicum.event.dto.EventShortDto;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -17,5 +17,5 @@ public class CompilationDto {
     private String title;
     private boolean pinned;
     @ToString.Exclude
-    private List<EventShortDto> events;
+    private Set<EventShortDto> events;
 }

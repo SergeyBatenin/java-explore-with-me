@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -17,5 +17,5 @@ public class NewCompilationDto {
     @Size(min = 1, max = 50, message = "Название подборки не может содержать больше 50 символов.")
     private String title;
     private boolean pinned = false;
-    private List<Long> events = new ArrayList<>();
+    private Set<Long> events = new HashSet<>();
 }

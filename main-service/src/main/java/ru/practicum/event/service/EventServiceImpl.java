@@ -19,6 +19,7 @@ import ru.practicum.event.dto.EventWithCountConfirmedRequests;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.PublicParamSearchEvent;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
+import ru.practicum.event.dto.UpdateEventRequest;
 import ru.practicum.event.dto.UpdateEventUserRequest;
 import ru.practicum.event.dto.mapper.EventMapper;
 import ru.practicum.event.model.AdminStateAction;
@@ -125,14 +126,14 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toFullDto(event, 0L, 0L);
     }
 
-    private void userUpdateEvent(Event event, UpdateEventUserRequest updateRequest) {
-        if (updateRequest.getTitle() != null) {
+    private void commonUpdateEvent(Event event, UpdateEventRequest updateRequest) {
+        if (updateRequest.getTitle() != null && !updateRequest.getTitle().isBlank()) {
             event.setTitle(updateRequest.getTitle());
         }
-        if (updateRequest.getAnnotation() != null) {
+        if (updateRequest.getAnnotation() != null && !updateRequest.getAnnotation().isBlank()) {
             event.setAnnotation(updateRequest.getAnnotation());
         }
-        if (updateRequest.getDescription() != null) {
+        if (updateRequest.getDescription() != null && !updateRequest.getDescription().isBlank()) {
             event.setDescription(updateRequest.getDescription());
         }
         if (updateRequest.getCategory() != null) {
@@ -153,6 +154,11 @@ public class EventServiceImpl implements EventService {
         if (updateRequest.getRequestModeration() != null) {
             event.setRequestModeration(updateRequest.getRequestModeration());
         }
+    }
+
+    private void userUpdateEvent(Event event, UpdateEventUserRequest updateRequest) {
+        commonUpdateEvent(event, updateRequest);
+
         UserStateAction userStateAction = updateRequest.getStateAction();
         if (userStateAction != null) {
             if (userStateAction == UserStateAction.CANCEL_REVIEW) {
@@ -283,33 +289,8 @@ public class EventServiceImpl implements EventService {
     }
 
     private void adminUpdateEvent(Event event, UpdateEventAdminRequest updateRequest) {
-        if (updateRequest.getTitle() != null) {
-            event.setTitle(updateRequest.getTitle());
-        }
-        if (updateRequest.getAnnotation() != null) {
-            event.setAnnotation(updateRequest.getAnnotation());
-        }
-        if (updateRequest.getDescription() != null) {
-            event.setDescription(updateRequest.getDescription());
-        }
-        if (updateRequest.getCategory() != null) {
-            event.getCategory().setId(updateRequest.getCategory());
-        }
-        if (updateRequest.getEventDate() != null) {
-            event.setEventDate(updateRequest.getEventDate());
-        }
-        if (updateRequest.getLocation() != null) {
-            event.setLocation(updateRequest.getLocation());
-        }
-        if (updateRequest.getPaid() != null) {
-            event.setPaid(updateRequest.getPaid());
-        }
-        if (updateRequest.getParticipantLimit() != null) {
-            event.setParticipantLimit(updateRequest.getParticipantLimit());
-        }
-        if (updateRequest.getRequestModeration() != null) {
-            event.setRequestModeration(updateRequest.getRequestModeration());
-        }
+        commonUpdateEvent(event, updateRequest);
+
         AdminStateAction adminStateAction = updateRequest.getStateAction();
         if (adminStateAction != null) {
             if (adminStateAction == AdminStateAction.REJECT_EVENT) {

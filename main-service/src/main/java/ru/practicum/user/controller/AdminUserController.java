@@ -21,6 +21,7 @@ import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.service.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -40,7 +41,7 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public List<UserDto> getByIds(@RequestParam(required = false) List<Long> ids,
+    public List<UserDto> getByIds(@RequestParam(required = false) Set<Long> ids,
                                   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                   @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET /admin/users request: ids={}, from={}, size={}", ids, from, size);

@@ -8,7 +8,7 @@ import lombok.ToString;
 import ru.practicum.event.model.Sort;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import java.util.List;
 @ToString
 public class PublicParamSearchEvent {
     private String text;
-    private List<Long> categories;
+    private Set<Long> categories;
     private Boolean paid;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rangeStart;

@@ -39,5 +39,5 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
     @Query("SELECT r " +
             "FROM ParticipationRequest r " +
             "WHERE r.event.id = :eventId AND r.id IN :ids AND r.status = 'PENDING'")
-    List<ParticipationRequest> findPendingRequestsByEventIdAndIdIn(long eventId, List<Long> ids);
+    List<ParticipationRequest> findPendingRequestsByEventIdAndIdIn(long eventId, Set<Long> ids);
 }
