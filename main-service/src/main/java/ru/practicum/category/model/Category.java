@@ -1,4 +1,4 @@
-package ru.practicum.ewm.model;
+package ru.practicum.category.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,27 +10,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "stats")
+@Table(name = "categories")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class ParamHit {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "app")
-    private String app;
-    @Column(name = "uri")
-    private String uri;
-    @Column(name = "ip")
-    private String ip;
-    @Column(name = "time_stamp")
-    private LocalDateTime timestamp;
+    private long id;
+    @Column(name = "name", unique = true)
+    private String name;
 }

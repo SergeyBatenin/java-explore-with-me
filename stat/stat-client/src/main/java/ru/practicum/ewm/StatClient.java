@@ -1,36 +1,48 @@
 package ru.practicum.ewm;
 
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestClient;
 import ru.practicum.ewm.dto.ParamHitDto;
 import ru.practicum.ewm.dto.ParamStatDto;
 import ru.practicum.ewm.dto.StatInfoDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class StatClient {
-    private final WebClient client;
+    private final RestClient restClient;
 
-    public StatClient(WebClient client) {
-        this.client = client;
+    public StatClient(RestClient restClient) {
+        this.restClient = restClient;
     }
 
-    public void save(String app, String uri, String ip, LocalDateTime timestamp) {
-        ParamHitDto payload = new ParamHitDto(app, uri, ip, timestamp);
-        client.post()
+    public void save(ParamHitDto payload) {
+        restClient.post()
                 .uri("/hit")
-                .bodyValue(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload) // Здесь укажите данные, которые хотите отправить
                 .retrieve()
-                .toBodilessEntity()
-                .then();
+                .onStatus(HttpStatusCode::is2xxSuccessful,
+                        ((request, response) -> System.out.println("Данные статистики успешно сохранены")))
+                .onStatus(HttpStatusCode::isError,
+                        (request, response) -> System.err.printf("ERROR:\n\tStatusCode=%d, Headers=%s",
+                                response.getStatusCode().value(), response.getHeaders()))
+                .toBodilessEntity();
     }
 
     public List<StatInfoDto> getStats(ParamStatDto paramDto) {
-        return client.get()
-                .uri("/stats")
+
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/stats")
+                        .queryParam("start", paramDto.getStart().withNano(0))
+                        .queryParam("end", paramDto.getEnd().withNano(0))
+                        .queryParamIfPresent("unique", Optional.ofNullable(paramDto.getUnique()))
+                        .queryParamIfPresent("uris", Optional.ofNullable(paramDto.getUris()))
+                        .build())
                 .retrieve()
-                .bodyToFlux(StatInfoDto.class)
-                .collectList()
-                .block();
+                .body(new ParameterizedTypeReference<List<StatInfoDto>>() {
+                });
     }
 }

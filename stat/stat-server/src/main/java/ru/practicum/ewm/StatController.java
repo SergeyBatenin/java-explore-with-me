@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.ParamHitDto;
 import ru.practicum.ewm.dto.ParamStatDto;
 import ru.practicum.ewm.dto.StatInfoDto;
+import ru.practicum.ewm.exception.DateValidationException;
 import ru.practicum.ewm.service.StatService;
+import ru.practicum.ewm.validator.ParamStatDtoValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +30,7 @@ import java.util.List;
 @Slf4j
 public class StatController {
     private final StatService statService;
+    private final ParamStatDtoValidator paramStatDtoValidator;
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,7 +46,14 @@ public class StatController {
                                  @RequestParam(required = false) List<String> uris,
                                  @RequestParam(defaultValue = "false") boolean unique) {
         ParamStatDto paramStatDto = new ParamStatDto(start, end, uris, unique);
-        log.info("GEt /stats request: {}", paramStatDto);
+        Errors errors = new BeanPropertyBindingResult(paramStatDto, "paramStatDto");
+        paramStatDtoValidator.validate(paramStatDto, errors);
+        log.info("GET /stats request: {}", paramStatDto);
+
+        if (errors.hasErrors()) {
+            throw new DateValidationException("Время начала периода не может быть позже даты окончания периода");
+        }
+
 
         List<StatInfoDto> statDtos;
         if (paramStatDto.getUris() == null) {
