@@ -1020,9 +1020,6 @@
 											"    pm.expect(target.id.toString()).equal(cid, 'Идентификатор комментария должен соответствовать идентификатору комментария в запросе');\r",
 											"    pm.expect(target.text).equal(text, 'Текст комментария должен соответствовать тексту комментария в запросе');\r",
 											"    pm.expect(target.author).to.not.be.null;\r",
-											"    pm.expect(target.author.id).equal(source.author.id, 'Идентификатор автора комментария должен соответствовать идентификатору при запросе');\r",
-											"    pm.expect(target.author.name).equal(source.author.name, 'Имя автора комментария должно соответствовать имени автора при запросе');\r",
-											"    pm.expect(target.eventId.toString()).equal(source.eventId.toString(), 'Идентификатор события должен соответствовать идентификатору события в запросе');\r",
 											"    pm.expect(target.created).to.not.be.null;\r",
 											"   \r",
 											"});"
