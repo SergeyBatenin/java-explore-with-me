@@ -37,7 +37,7 @@ public class ExceptionController {
     @ExceptionHandler(NotAvailableException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiError handleNotAvailable(NotAvailableException exception) {
-        log.error("ERROR", exception);
+        log.warn("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
 
         return ApiError.builder()
@@ -52,7 +52,7 @@ public class ExceptionController {
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotFound(DataNotFoundException exception) {
-        log.error("ERROR", exception);
+        log.warn("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
 
         return ApiError.builder()
@@ -68,7 +68,7 @@ public class ExceptionController {
             EventAvailableException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConstraintViolation(RuntimeException exception) {
-        log.error("ERROR", exception);
+        log.warn("ERROR", exception);
         final ByteArrayOutputStream out = getOutputStream(exception);
 
         return ApiError.builder()
