@@ -1,6 +1,7 @@
 package ru.practicum.comment.controller;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -24,8 +25,8 @@ public class PublicCommentController {
 
     @GetMapping
     public List<CommentDto> getByEventId(@PathVariable @Positive long eventId,
-                                         @RequestParam(defaultValue = "0") int from,
-                                         @RequestParam(defaultValue = "10") int size) {
+                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET BY EVENT /comments/events/{} request", eventId);
         List<CommentDto> commentDtos = commentService.getByEventId(eventId, from, size);
         log.info("GET BY EVENT /comments/events/{} response: {} elements", eventId, commentDtos.size());

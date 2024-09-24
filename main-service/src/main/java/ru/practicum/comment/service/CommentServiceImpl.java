@@ -34,11 +34,10 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public CommentDto create(long userId, NewCommentDto newCommentDto) {
-        User user = checkAndGetUser(userId);
-        Event event = checkAndGetEvent(newCommentDto.getEventId());
+        User user = userRepository.checkAndGetUser(userId);
+        Event event = eventRepository.checkAndGetEvent(newCommentDto.getEventId());
 
         Comment comment = commentMapper.toComment(newCommentDto, event, user);
-        System.out.println("\n" + comment + "\n");
         commentRepository.save(comment);
         return commentMapper.toDto(comment);
     }
@@ -46,8 +45,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public CommentDto update(long userId, long commentId, UpdateCommentDto updateCommentDto) {
-        checkAndGetUser(userId);
-        Comment comment = checkAndGetComment(commentId);
+        userRepository.checkAndGetUser(userId);
+        Comment comment = commentRepository.checkAndGetComment(commentId);
         if (comment.getAuthor().getId() != userId) {
             throw new NotAvailableException("Изменить комментарий может только автор.");
         }
@@ -59,8 +58,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public void delete(long userId, long commentId) {
-        checkAndGetUser(userId);
-        Comment comment = checkAndGetComment(commentId);
+        userRepository.checkAndGetUser(userId);
+        Comment comment = commentRepository.checkAndGetComment(commentId);
         if (comment.getAuthor().getId() != userId) {
             throw new NotAvailableException("Удалить комментарий может только автор.");
         }
@@ -70,35 +69,11 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentDto> getByEventId(long eventId, int from, int size) {
-        checkAndGetEvent(eventId);
+        eventRepository.checkAndGetEvent(eventId);
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
 
         return commentRepository.findByEventId(eventId, page).stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    private User checkAndGetUser(long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.debug("GET USER. Пользователь с айди {} не найден.", userId);
-                    return new DataNotFoundException("Пользователь с id=" + userId + " не существует.");
-                });
-    }
-
-    private Event checkAndGetEvent(long eventId) {
-        return eventRepository.findById(eventId)
-                .orElseThrow(() -> {
-                    log.debug("GET USER. Событие с айди {} не найден.", eventId);
-                    return new DataNotFoundException("Событие с id=" + eventId + " не существует.");
-                });
-    }
-
-    private Comment checkAndGetComment(long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> {
-                    log.debug("GET COMMENT. Комментарий с айди {} не найден.", commentId);
-                    return new DataNotFoundException("Комментарий с id=" + commentId + " не существует.");
-                });
     }
 }

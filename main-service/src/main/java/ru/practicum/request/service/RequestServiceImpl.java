@@ -34,16 +34,8 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public ParticipationRequestDto create(long userId, long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> {
-                    log.debug("GET EVENT. Событие с айди {} не найден.", eventId);
-                    return new DataNotFoundException("Событие с id=" + eventId + " не существует.");
-                });
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.debug("GET USER. Пользователь с айди {} не найден.", userId);
-                    return new DataNotFoundException("Пользователь с id=" + userId + " не существует.");
-                });
+        Event event = eventRepository.checkAndGetEvent(eventId);
+        User user = userRepository.checkAndGetUser(userId);
         checkEventAvailable(event, userId);
 
         List<ParticipationRequest> requestOpt = requestRepository.findByRequesterIdAndEventId(userId, eventId);
@@ -89,11 +81,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional(readOnly = true)
     @Override
     public List<ParticipationRequestDto> getAll(long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.debug("GET USER. Пользователь с айди {} не найден.", userId);
-                    return new DataNotFoundException("Пользователь с id=" + userId + " не существует.");
-                });
+        userRepository.checkAndGetUser(userId);
         return requestRepository.findRequestsByUser(userId).stream()
                 .map(requestMapper::toDto)
                 .collect(Collectors.toList());
@@ -102,16 +90,8 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public ParticipationRequestDto cancel(long userId, long requestId) {
-        ParticipationRequest request = requestRepository.findById(requestId)
-                .orElseThrow(() -> {
-                    log.debug("GET REQUEST. Заявка с айди {} не найденf.", requestId);
-                    return new DataNotFoundException("Заявка с id=" + requestId + " не существует.");
-                });
-        userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.debug("GET USER. Пользователь с айди {} не найден.", userId);
-                    return new DataNotFoundException("Пользователь с id=" + userId + " не существует.");
-                });
+        ParticipationRequest request = requestRepository.checkAndGetRequest(requestId);
+        userRepository.checkAndGetUser(userId);
         if (request.getRequester().getId() != userId) {
             throw new IllegalStateException("Отмена заявки на событие невозможна. У вас нет активных заявок на это событие.");
         }

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.event.dto.EventWithCountConfirmedRequests;
+import ru.practicum.exception.DataNotFoundException;
 import ru.practicum.request.model.ParticipationRequest;
 
 import java.util.List;
@@ -40,4 +41,12 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
             "FROM ParticipationRequest r " +
             "WHERE r.event.id = :eventId AND r.id IN :ids AND r.status = 'PENDING'")
     List<ParticipationRequest> findPendingRequestsByEventIdAndIdIn(long eventId, Set<Long> ids);
+
+    default ParticipationRequest checkAndGetRequest(long requestId) {
+        return this.findById(requestId)
+                .orElseThrow(() -> {
+//                    log.debug("GET REQUEST. Заявка с айди {} не найденf.", requestId);
+                    return new DataNotFoundException("Заявка с id=" + requestId + " не существует.");
+                });
+    }
 }

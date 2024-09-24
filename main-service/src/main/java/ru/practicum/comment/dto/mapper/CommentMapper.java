@@ -9,18 +9,11 @@ import ru.practicum.event.model.Event;
 import ru.practicum.user.dto.mapper.UserMapper;
 import ru.practicum.user.model.User;
 
-import java.time.LocalDateTime;
-
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface CommentMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created", expression = "java(getCurrentTime())")
     Comment toComment(NewCommentDto commentDto, Event event, User author);
 
     @Mapping(target = "eventId", source = "comment.event.id")
     CommentDto toDto(Comment comment);
-
-    default LocalDateTime getCurrentTime() {
-        return LocalDateTime.now();
-    }
 }

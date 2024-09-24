@@ -15,7 +15,6 @@ import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.dto.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.exception.DataNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,11 +46,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public CompilationDto update(long compId, UpdateCompilationRequest updateCompilationDto) {
-        Compilation compilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> {
-                    log.debug("GET COMPILATION. Подборка с айди {} не найден.", compId);
-                    return new DataNotFoundException("Подборка с id=" + compId + " не существует.");
-                });
+        Compilation compilation = compilationRepository.checkAndGetCompilation(compId);
 
         if (updateCompilationDto.getEvents() != null) {
             List<Event> events = eventRepository.findAllById(updateCompilationDto.getEvents());
@@ -92,11 +87,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional(readOnly = true)
     @Override
     public CompilationDto getById(long compId) {
-        Compilation compilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> {
-                    log.debug("GET COMPILATION. Подборка с айди {} не найден.", compId);
-                    return new DataNotFoundException("Подборка с id=" + compId + " не существует.");
-                });
+        Compilation compilation = compilationRepository.checkAndGetCompilation(compId);
         return compilationMapper.toDto(compilation, eventMapper.toShortDto(compilation.getEvents()));
     }
 }
