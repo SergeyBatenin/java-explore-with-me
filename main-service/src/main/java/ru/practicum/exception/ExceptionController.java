@@ -65,7 +65,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class, IllegalStateException.class, RequestLimitException.class,
-            EventAvailableException.class, IllegalArgumentException.class})
+            EventAvailableException.class, IllegalArgumentException.class, TimeUpdateCommentException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConstraintViolation(RuntimeException exception) {
         log.warn("ERROR", exception);

@@ -100,6 +100,7 @@
     },
     "/users/{userId}/comments/{commentId}": {
       "patch": {
+        "description": "Обратите внимание: обновить комментарий можно в течение 1 часа после публикации",
         "operationId": "updateComment",
         "requestBody": {
           "content": {

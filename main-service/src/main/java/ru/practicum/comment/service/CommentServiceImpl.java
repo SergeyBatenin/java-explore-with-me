@@ -14,11 +14,12 @@ import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.exception.DataNotFoundException;
 import ru.practicum.exception.NotAvailableException;
+import ru.practicum.exception.TimeUpdateCommentException;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,9 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.checkAndGetComment(commentId);
         if (comment.getAuthor().getId() != userId) {
             throw new NotAvailableException("Изменить комментарий может только автор.");
+        }
+        if (comment.getCreated().plusHours(1).isBefore(LocalDateTime.now())) {
+            throw new TimeUpdateCommentException("Обновить комментарий можно в течения 1 часа после публикации");
         }
         comment.setText(updateCommentDto.getText());
 
