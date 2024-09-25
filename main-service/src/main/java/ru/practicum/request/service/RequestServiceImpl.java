@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.State;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.exception.DataNotFoundException;
 import ru.practicum.exception.EventAvailableException;
 import ru.practicum.exception.RequestLimitException;
 import ru.practicum.request.dto.ParticipationRequestDto;
