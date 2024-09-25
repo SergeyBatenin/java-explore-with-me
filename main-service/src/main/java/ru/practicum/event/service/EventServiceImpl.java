@@ -69,12 +69,8 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventFullDto create(long userId, NewEventDto eventDto) {
-        User user = checkAndGetUser(userId);
-        Category category = categoryRepository.findById(eventDto.getCategory())
-                .orElseThrow(() -> {
-                    log.debug("GET CATEGORY. Категории с айди {} не найден.", eventDto.getCategory());
-                    return new DataNotFoundException("Категории с id=" + eventDto.getCategory() + " не существует.");
-                });
+        User user = userRepository.checkAndGetUser(userId);
+        Category category = categoryRepository.checkAndGetCategory(eventDto.getCategory());
         Event event = eventMapper.toEvent(eventDto, user, category);
         eventRepository.save(event);
         return eventMapper.toFullDto(event, 0L, 0L);
@@ -83,7 +79,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public List<EventShortDto> getAll(long userId, int from, int size) {
-        checkAndGetUser(userId);
+        userRepository.checkAndGetUser(userId);
 
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
 
@@ -98,8 +94,8 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public EventFullDto getById(long userId, long eventId) {
-        checkAndGetUser(userId);
-        Event event = checkAndGetEvent(eventId);
+        userRepository.checkAndGetUser(userId);
+        Event event = eventRepository.checkAndGetEvent(eventId);
 
         if (event.getInitiator().getId() != userId) {
             throw new NotAvailableException("Нет доступа к запрашиваемому событию.");
@@ -111,12 +107,12 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventFullDto updateByCreator(long userId, long eventId, UpdateEventUserRequest updateRequest) {
-        Event event = checkAndGetEvent(eventId);
+        Event event = eventRepository.checkAndGetEvent(eventId);
         if (event.getState() == State.PUBLISHED) {
             throw new IllegalStateException("Изменение опубликованных событий недопустимо");
         }
 
-        checkAndGetUser(userId);
+        userRepository.checkAndGetUser(userId);
 
         if (event.getInitiator().getId() != userId) {
             throw new NotAvailableException("Нет доступа к запрашиваемому событию.");
@@ -172,8 +168,8 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public List<ParticipationRequestDto> getRequests(long userId, long eventId) {
-        checkAndGetUser(userId);
-        Event event = checkAndGetEvent(eventId);
+        userRepository.checkAndGetUser(userId);
+        Event event = eventRepository.checkAndGetEvent(eventId);
         if (event.getInitiator().getId() != userId) {
             return Collections.emptyList();
         }
@@ -186,8 +182,8 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventRequestStatusUpdateResult replyToRequests(long userId, long eventId, EventRequestStatusUpdateRequest updateRequest) {
-        checkAndGetUser(userId);
-        Event event = checkAndGetEvent(eventId);
+        userRepository.checkAndGetUser(userId);
+        Event event = eventRepository.checkAndGetEvent(eventId);
 
         if (event.getState() != State.PUBLISHED) {
             throw new IllegalStateException("Событие должно быть опубликовано!");
@@ -253,29 +249,13 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         return new EventRequestStatusUpdateResult(new ArrayList<>(), rejectedRequests);
     }
-
-    private User checkAndGetUser(long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.debug("GET USER. Пользователь с айди {} не найден.", userId);
-                    return new DataNotFoundException("Пользователь с id=" + userId + " не существует.");
-                });
-    }
-
-    private Event checkAndGetEvent(long eventId) {
-        return eventRepository.findById(eventId)
-                .orElseThrow(() -> {
-                    log.debug("GET EVENT. Событие с айди {} не найден.", eventId);
-                    return new DataNotFoundException("Событие с id=" + eventId + " не существует.");
-                });
-    }
     //endregion PrivateApi
 
     //region AdminApi
     @Transactional
     @Override
     public EventFullDto updateByAdmin(long eventId, UpdateEventAdminRequest updateRequest) {
-        Event event = checkAndGetEvent(eventId);
+        Event event = eventRepository.checkAndGetEvent(eventId);
         if (updateRequest.getStateAction() == AdminStateAction.PUBLISH_EVENT
                 && event.getState() != State.PENDING) {
             throw new IllegalStateException("Опубликовать события можно только в состоянии \"В ожидании\"");
@@ -446,7 +426,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public EventFullDto showById(long eventId, HttpServletRequest request) {
-        Event event = checkAndGetEvent(eventId);
+        Event event = eventRepository.checkAndGetEvent(eventId);
         if (event.getState() != State.PUBLISHED) {
             throw new DataNotFoundException("Событие не опубликовано");
         }

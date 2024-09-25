@@ -11,7 +11,6 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.dto.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.exception.DataNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,11 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto update(long catId, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> {
-                    log.debug("UPDATE CATEGORY. Категория с айди {} не найден", catId);
-                    return new DataNotFoundException("Категория с id=" + catId + " не существует");
-                });
+        Category category = categoryRepository.checkAndGetCategory(catId);
         category.setName(categoryDto.getName());
         return categoryMapper.toDto(category);
     }
@@ -62,11 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     @Override
     public CategoryDto getById(long catId) {
-        Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> {
-                    log.debug("GET BY ID CATEGORY. Категория с айди {} не найден", catId);
-                    return new DataNotFoundException("Категория с id=" + catId + " не существует");
-                });
+        Category category = categoryRepository.checkAndGetCategory(catId);
 
         return categoryMapper.toDto(category);
     }
